@@ -18,18 +18,7 @@ public class Spacecraft {
         this.birth_year = birth_year;
     }
 
-    public List<Spacecraft> SpacecraftArray(Integer count){
-        List<Spacecraft> array = new ArrayList<>();
-        Random random;
-        RandomStringGenerator
 
-        for(int i = 0;i < count;i++){
-
-        }
-
-
-        return array;
-    }
 
 
 }

@@ -12,5 +12,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="org.apache.commons:commons-text:1.7" level="project" />
+    <orderEntry type="library" name="org.postgresql:postgresql:42.2.6" level="project" />
   </component>
 </module>
