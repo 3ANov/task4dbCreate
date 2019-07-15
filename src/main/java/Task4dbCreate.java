@@ -2,17 +2,24 @@ import org.apache.commons.text.RandomStringGenerator;
 
 import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 public class Task4dbCreate {
     public static void main(String[] args) throws SQLException{
         char [][] pairs = {{'a','z'},{'A','Z'}};
         List<String> uniqueRandomStringList = new ArrayList<String>();
+        /*List<String> uniqueRandomSpacecraftID = new ArrayList<String>();
+        List<String> uniqueRandomPlanetID = new ArrayList<String>();
+        List<String> uniqueRandomComanderID = new ArrayList<String>();
+
+         */
 
         String DB_URL = "jdbc:postgresql://127.0.0.1:5432/task4db";
         String USER = "postgres";
         String PASS = "gfhjkmjb";
 
         RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(pairs).build();
+
 
 
 
@@ -61,10 +68,23 @@ public class Task4dbCreate {
 
 
 
-            String sql = "TRUNCATE TABLE ?";
+
+            String sql = "";
+            for (String string:tableNames) {
+                sql+="TRUNCATE "+string+" CASCADE;\n";
+            }
+
+
+
+
             PreparedStatement deleteStatement = connection.prepareStatement(sql);
-            deleteStatement.setString(1,"Spacecraft");
-            deleteStatement.executeUpdate();
+
+            //deleteStatement.setString(1,"Spacecraft");
+            System.out.println(deleteStatement.executeUpdate());
+
+
+
+
 
             /*
             for(String string:tableNames){
@@ -78,27 +98,74 @@ public class Task4dbCreate {
 
 
             sql = "INSERT INTO Spacecraft (id,name,service_life,birth_year) Values (?, ?, ?, ?)";
-            PreparedStatement isertStatement = connection.prepareStatement(sql);
-
-
-
-
-
-
-
-
+            PreparedStatement insertStatement = connection.prepareStatement(sql);
 
             for(int i = 0;i < 20;i++){
 
-                isertStatement.setInt(1,i+1);
-                isertStatement.setString(2,uniqueRandomStringList.remove(i));
-                isertStatement.setInt(3,new Random().nextInt(10));
-                isertStatement.setInt(4,new Random().nextInt(30)+2000);
-                int rows = isertStatement.executeUpdate();
+                insertStatement.setInt(1,i+1);
+                insertStatement.setString(2,uniqueRandomStringList.remove(i));
+                insertStatement.setInt(3,new Random().nextInt(10));
+                insertStatement.setInt(4,new Random().nextInt(30)+2000);
+                insertStatement.executeUpdate();
 
-                System.out.printf("%d rows added \n", rows);
+                //System.out.printf("%d rows added \n", rows);
 
             }
+
+            sql = "INSERT INTO Planet (id,name,distance) Values (?, ?, ?)";
+
+            insertStatement = connection.prepareStatement(sql);
+
+
+            for(int i = 0;i < 10;i++){
+
+                insertStatement.setInt(1,i+1);
+                insertStatement.setString(2,uniqueRandomStringList.remove(i));
+                insertStatement.setFloat(3,new Random().nextFloat());
+                insertStatement.executeUpdate();
+
+                //System.out.printf("%d rows added \n", rows);
+
+            }
+
+            sql = "INSERT INTO Commander (id,name) Values (?, ?)";
+
+            insertStatement = connection.prepareStatement(sql);
+
+
+
+            for(int i = 0;i < 10;i++){
+
+                insertStatement.setInt(1,i+1);
+                insertStatement.setString(2,uniqueRandomStringList.remove(i));
+                insertStatement.executeUpdate();
+
+                //System.out.printf("%d rows added \n", rows);
+
+            }
+
+
+            sql = "INSERT INTO Flight (id,spacecraft_id,planet_id,commander_id,start_date) Values (?, ?, ?, ?, ?)";
+
+            insertStatement = connection.prepareStatement(sql);
+
+
+
+            for(int i = 0;i < 30;i++){
+
+                insertStatement.setInt(1,i+1);
+                insertStatement.setInt(2,new Random().nextInt(20)+1);
+                insertStatement.setInt(3,new Random().nextInt(10)+1);
+                insertStatement.setInt(4,new Random().nextInt(10)+1);
+                java.sql.Date startDate = new java.sql.Date(new Random().nextInt(2000)+40,new Random().nextInt(12)+1,new Random().nextInt(31)+1);
+                insertStatement.setDate(5, startDate);
+                insertStatement.executeUpdate();
+
+                //System.out.printf("%d rows added \n", rows);
+
+            }
+
+
 
 
 
