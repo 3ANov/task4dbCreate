@@ -3,20 +3,23 @@ import org.apache.commons.text.RandomStringGenerator;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.stream.Stream;
 
 public class Task4dbCreate {
     public static void main(String[] args) throws SQLException{
         char [][] pairs = {{'a','z'},{'A','Z'}};
         List<String> uniqueRandomStringList = new ArrayList<String>();
+        
         /*List<String> uniqueRandomSpacecraftID = new ArrayList<String>();
         List<String> uniqueRandomPlanetID = new ArrayList<String>();
         List<String> uniqueRandomComanderID = new ArrayList<String>();
 
          */
+        
 
-        String DB_URL = "jdbc:postgresql://127.0.0.1:5432/task4db";
-        String USER = "postgres";
-        String PASS = "gfhjkmjb";
+        String DB_URL = "jdbc:postgresql://127.0.0.1:5432/test_db_stepik_course";
+        String USER = "testuser";
+        String PASS = "testuser";
 
         RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange(pairs).build();
 
@@ -32,6 +35,8 @@ public class Task4dbCreate {
         hs.addAll(uniqueRandomStringList);
         uniqueRandomStringList.clear();
         uniqueRandomStringList.addAll(hs);
+
+
 
         //System.out.println(uniqueRandomStringList.size());
         /*
@@ -56,6 +61,36 @@ public class Task4dbCreate {
 
              */
 
+            String sql = "CREATE TABLE Spacecraft(\n" +
+                    "  id SERIAL PRIMARY KEY,\n" +
+                    "  name TEXT UNIQUE,\n" +
+                    "  service_life INT DEFAULT 1000,\n" +
+                    "  birth_year INT CHECK(birth_year > 0)\n" +
+                    ");" +
+                    "CREATE TABLE Planet(\n" +
+                    "  id SERIAL PRIMARY KEY,\n" +
+                    "  name TEXT UNIQUE,\n" +
+                    "  distance NUMERIC(5,2),\n" +
+                    "  galaxy INT CHECK(galaxy > 0)\n" +
+                    ");\n" +
+                    "\n" +
+                    "CREATE TABLE Commander(\n" +
+                    "  id SERIAL PRIMARY KEY,\n" +
+                    "  name TEXT\n" +
+                    ");\n" +
+                    "\n" +
+                    "CREATE TABLE Flight(\n" +
+                    "  id INT PRIMARY KEY,\n" +
+                    "  spacecraft_id INT REFERENCES Spacecraft,\n"+
+                    "  planet_id INT REFERENCES Planet,\n" +
+                    "  commander_id INT REFERENCES Commander,\n" +
+                    "  start_date DATE,\n" +
+                    "  UNIQUE(spacecraft_id, start_date),\n"+
+                    "  UNIQUE(commander_id, start_date)\n" +
+                    ");\n";
+            Statement createStatement = connection.createStatement();
+            createStatement.execute(sql);
+
 
 
 
@@ -69,7 +104,7 @@ public class Task4dbCreate {
 
 
 
-            String sql = "";
+            sql = "";
             for (String string:tableNames) {
                 sql+="TRUNCATE "+string+" CASCADE;\n";
             }
@@ -112,7 +147,7 @@ public class Task4dbCreate {
 
             }
 
-            sql = "INSERT INTO Planet (id,name,distance) Values (?, ?, ?)";
+            sql = "INSERT INTO Planet (id,name,distance,galaxy) Values (?, ?, ?, ?)";
 
             insertStatement = connection.prepareStatement(sql);
 
@@ -121,7 +156,8 @@ public class Task4dbCreate {
 
                 insertStatement.setInt(1,i+1);
                 insertStatement.setString(2,uniqueRandomStringList.remove(i));
-                insertStatement.setFloat(3,new Random().nextFloat());
+                insertStatement.setFloat(3,(float) Math.random()*1000);
+                insertStatement.setInt(4,new Random().nextInt(10)+1);
                 insertStatement.executeUpdate();
 
                 //System.out.printf("%d rows added \n", rows);
@@ -179,6 +215,7 @@ public class Task4dbCreate {
             if (connection != null) {
                 connection.close();
             }
+
         }
 
 
